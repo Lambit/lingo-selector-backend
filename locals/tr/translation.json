@@ -11,5 +11,12 @@
     "email_failure": "E-posta arıza",
     "account_activation_success": "Başarı",
     "account_activation_failure": "Arıza",
-    "validation_failure": "Validation Arıza"
+    "validation_failure": "Validation Arıza",
+    "user_not_found": "Kullanıcı bulunamadı",
+    "auth_failure": "Yanlış kimlik bilgileri",
+    "inactive_auth_failure": "Hesap etkin değil",
+    "unauth_update": "Kullanıcıyı güncelleme yetkisi yok",
+    "unauth_delete": "Kullanıcıyı silme yetkisi yok",
+    "password_reset_success": "Şifre sıfırlandı",
+    "email_not_inuse": "E-posta bulunamadı"
 }

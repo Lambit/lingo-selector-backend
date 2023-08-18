@@ -11,5 +11,12 @@
     "email_failure": "E-mail failure",
     "account_activation_success": "Success",
     "account_activation_failure": "Fail",
-    "validation_failure": "Validation Failure"
+    "validation_failure": "Validation Failure",
+    "user_not_found": "User not found",
+    "auth_failure": "Incorrect credentials",
+    "inactive_auth_failure": "Account is inactive",
+    "unauth_update": "Not authorized to update user",
+    "unauth_delete": "Not authorized to delete user",
+    "password_reset_success": "Password was reset",
+    "email_not_inuse": "Email not found"
 }

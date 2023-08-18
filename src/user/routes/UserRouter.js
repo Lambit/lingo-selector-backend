@@ -1,9 +1,11 @@
 const express = require('express');
-const UserService = require('./UserService');
+const UserService = require('../services/UserService');
 //Create a new router instance for user routes
 const router = express.Router();
 const { check, validationResult } = require('express-validator');
-const ValidationErrorException = require('../error/ValidationErrorException');
+const ValidationErrorException = require('../../error/ValidationErrorException');
+const ForbiddenException = require('../../error/ForbiddenException');
+const pagination = require('../../middleware/pagination');
 
 /*
     UserRouter hold the user routes for our API post request that uses the save function
@@ -68,6 +70,61 @@ router.post('/api/users/token/:token', async (req, res, next) => {
   try {
     await UserService.activate(token);
     return res.send({ message: req.t('account_activation_success') });
+  } catch (err) {
+    next(err);
+  }
+});
+
+//Get route ----- User list route get all users limits the amount with pagination middleware
+router.get('/api/users', pagination, async (req, res, next) => {
+  try {
+    const { page, size } = req.pagination;
+    const users = await UserService.getUsers(page, size);
+    return res.send(users);
+  } catch (err) {
+    next(err);
+  }
+});
+
+//Get route ----- User by id route get
+router.get('/api/users/:id', async (req, res, next) => {
+  try {
+    const user = await UserService.getUserById(req.params.id);
+    res.send(user);
+  } catch (err) {
+    next(err);
+  }
+});
+
+//Put route ----- Update user - if id doesnt match return error response other wise valid
+router.put('/api/users/:id', async (req, res, next) => {
+  const authenticatedUser = req.authenticatedUser;
+  if (!authenticatedUser || authenticatedUser.id !== req.params.id) {
+    return next(new ForbiddenException('unauth_update'));
+  }
+  const user = await UserService.updateUser(req.params.id, req.body);
+  return res.send(user);
+});
+
+//Delete route ----- Delete user
+router.delete('/api/users/:id', async (req, res, next) => {
+  const authenticatedUser = req.authenticatedUser;
+  if (!authenticatedUser || authenticatedUser.id !== req.params.id) {
+    return next(new ForbiddenException('unauth_delete'));
+  }
+  await UserService.deleteUser(req.params.id);
+  res.send();
+});
+
+//Post route ----- Password reset
+router.post('/api/user/password', check('email').isEmail().withMessage('email_invalid'), async (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return next(new ValidationErrorException(errors.array()));
+  }
+  try {
+    await UserService.resetPassword(req.body.email);
+    return res.send({ message: req.t('password_reset_success') });
   } catch (err) {
     next(err);
   }

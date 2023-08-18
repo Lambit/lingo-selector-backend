@@ -1,5 +1,6 @@
 const Sequelize = require('sequelize');
-const sequelize = require('../config/database');
+const sequelize = require('../../config/database');
+const Token = require('../../auth/model/Token');
 
 const Model = Sequelize.Model;
 
@@ -31,4 +32,12 @@ User.init(
     modelName: 'user',
   },
 );
+
+/*
+  User has multiple tokens, whenever user is deleted, Token table is effected by these options
+    onDelete: deletes all tokens tied to user,
+    foreignKey: Token table uses the id from user table 
+*/
+User.hasMany(Token, { onDelete: 'cascade', foreignKey: 'userId' });
+
 module.exports = User;

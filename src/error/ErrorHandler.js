@@ -7,7 +7,10 @@ module.exports = (err, req, res, next) => {
     //Loop over error path and convert it to message in empty object
     errors.forEach((error) => (validationErrors[error.path] = req.t(error.msg)));
   }
-  res
-    .status(status)
-    .send({ path: req.originalUrl, timestamp: new Date().getTime(), message: req.t(message), validationErrors });
+  res.status(status).send({
+    path: req.originalUrl,
+    timestamp: new Date().getTime(),
+    message: req.t(message),
+    validationErrors,
+  });
 };

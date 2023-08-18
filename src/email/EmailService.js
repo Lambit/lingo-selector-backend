@@ -1,4 +1,5 @@
 const transporter = require('../config/emailTransporter');
+const logger = require('../shared/logger');
 
 const sendAccountActivation = async (email, token) => {
   await transporter.sendMail({
@@ -9,4 +10,9 @@ const sendAccountActivation = async (email, token) => {
   });
 };
 
-module.exports = { sendAccountActivation };
+const passwordResetEmail = async (email, token) => {
+  const url = `http://localhost:3000/password-reset/${token}`;
+  logger.info(url);
+};
+
+module.exports = { sendAccountActivation, passwordResetEmail };
