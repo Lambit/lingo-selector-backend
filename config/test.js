@@ -7,6 +7,14 @@ module.exports = {
     storage: ':memory:',
     logging: false,
   },
-  uploadDir: 'upload-test',
+  mail: {
+    host: 'smtp.ethereal.email',
+    port: 587,
+    auth: {
+      user: 'anna.gerhold51@ethereal.email',
+      pass: 'xSXQMPTMx9kXFkeaKe',
+    },
+  },
+  uploadDir: 'uploads-test',
   profileDir: 'profile-test',
 };

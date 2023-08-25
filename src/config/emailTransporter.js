@@ -1,7 +1,8 @@
 const nodemailer = require('nodemailer');
-const nodeMailerStub = require('nodemailer-stub');
+const config = require('config');
 
-//Initializing and email transport to send activation emails
-const transporter = nodemailer.createTransport(nodeMailerStub.stubTransport);
+const mailConfig = config.get('mail');
+
+const transporter = nodemailer.createTransport({ ...mailConfig });
 
 module.exports = transporter;
