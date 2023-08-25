@@ -1,5 +1,8 @@
 node_modules
-*.sqlite
+database.sqlite
+production.sqlite
+staging.sqlite
 uploads-*
-*.log
-.env
+uploads-staging
+app.log
+
