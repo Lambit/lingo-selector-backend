@@ -8,6 +8,7 @@ const InvalidTokenException = require('../error/InvalidTokenException');
 const NotFoundException = require('../../error/NotFoundException');
 const { generateRandomString } = require('../../shared/generator');
 const TokenService = require('../../auth/services/TokenService');
+const FileService = require('./FileService');
 /*
     UserService holds the business service of the application such as 
     hashing and saving data for users. The save function does so.
@@ -55,7 +56,7 @@ const getUsers = async (page, size, authenticatedUser) => {
     },
     limit: size,
     offset: page * size,
-    attributes: ['id', 'username', 'email'],
+    attributes: ['id', 'username', 'email', 'image'],
   });
   return {
     content: usersCount.rows,
@@ -72,7 +73,7 @@ const getUserById = async (id) => {
       id: id,
       inactive: false,
     },
-    attributes: ['id', 'username', 'email'],
+    attributes: ['id', 'username', 'email', 'image'],
   });
   if (!user) {
     throw new NotFoundException('user_not_found');
@@ -88,11 +89,16 @@ const updateUser = async (id, updateBody) => {
     },
   });
   user.username = updateBody.username;
+  if (user.image) {
+    await FileService.deleteProfileImage(user.image);
+  }
+  user.image = await FileService.saveProfileImage(updateBody.image);
   await user.save();
   return {
     id: id,
     username: user.username,
     email: user.email,
+    image: user.image,
   };
 };
 
@@ -115,4 +121,30 @@ const resetPassword = async (email) => {
   }
 };
 
-module.exports = { save, findByEmail, activate, getUsers, getUserById, updateUser, deleteUser, resetPassword };
+//Identify the token correlated with password reset request
+const queryPasswordToken = (token) => {
+  return User.findOne({ where: { passwordResetToken: token } });
+};
+
+const updatePassword = async (updateRequest) => {
+  const user = await queryPasswordToken(updateRequest.passwordResetToken);
+  const hash = await bcrypt.hash(updateRequest.password, 10);
+  user.password = hash;
+  user.passwordResetToken = null;
+  user.inactive = false;
+  user.activationToken = null;
+  await user.save();
+  await TokenService.deleteMultipleTokens(user.id);
+};
+
+module.exports = {
+  save,
+  findByEmail,
+  activate,
+  getUsers,
+  getUserById,
+  updateUser,
+  deleteUser,
+  resetPassword,
+  updatePassword,
+};

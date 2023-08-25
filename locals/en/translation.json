@@ -1,4 +1,5 @@
 {
+    "_comment": "English",
     "username_null": "Username cannot be null",
     "username_size": "Must have min 4 max 32 characters",
     "email_null": "E-mail cannot be null",
@@ -18,5 +19,8 @@
     "unauth_update": "Not authorized to update user",
     "unauth_delete": "Not authorized to delete user",
     "password_reset_success": "Password was reset",
-    "email_not_inuse": "Email not found"
+    "password_reset_fail": "Unable to perform request",
+    "email_not_inuse": "Email not found",
+    "profile_image_size": "Cannot be larger than 2MB",
+    "unsupported_image_file": "Unsupported file type"
 }

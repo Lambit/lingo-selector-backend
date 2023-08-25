@@ -1,4 +1,5 @@
 {
+    "_comment": "Turkish",
     "username_null": "Kullanıcı adı boş olamaz",
     "username_size": "En az 4 en fazla 32 karakter olmalıdır",
     "email_null": "E-posta boş olamaz",
@@ -18,5 +19,8 @@
     "unauth_update": "Kullanıcıyı güncelleme yetkisi yok",
     "unauth_delete": "Kullanıcıyı silme yetkisi yok",
     "password_reset_success": "Şifre sıfırlandı",
-    "email_not_inuse": "E-posta bulunamadı"
+    "password_reset_fail": "İstek gerçekleştirilemiyor",
+    "email_not_inuse": "E-posta bulunamadı",
+    "profile_image_size": "2 MB'tan büyük olamaz",
+    "unsupported_image_file": "Desteklenmeyen dosya türü"
 }

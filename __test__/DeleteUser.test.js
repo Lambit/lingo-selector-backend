@@ -3,6 +3,14 @@ const request = require('supertest');
 const { syncSequel, clearBefore, activeUser, addUser } = require('./constants');
 const en = require('../locals/en/translation.json');
 const tr = require('../locals/tr/translation.json');
+const cn = require('../locals/cn/translation.json');
+const de = require('../locals/de/translation.json');
+const es = require('../locals/es/translation.json');
+const fr = require('../locals/fr/translation.json');
+const gr = require('../locals/gr/translation.json');
+const jp = require('../locals/jp/translation.json');
+const np = require('../locals/np/translation.json');
+const pt = require('../locals/pt/translation.json');
 
 syncSequel();
 clearBefore();
@@ -37,12 +45,21 @@ describe('Delete User', () => {
     const response = await deleteUser();
     expect(response.status).toBe(403);
   });
+
   /*
     Internalization message Tests ----Create a table with messages
   */
   it.each`
     language | message
     ${'en'}  | ${en.unauth_delete}
+    ${'cn'}  | ${cn.unauth_delete}
+    ${'de'}  | ${de.unauth_delete}
+    ${'es'}  | ${es.unauth_delete}
+    ${'fr'}  | ${fr.unauth_delete}
+    ${'gr'}  | ${gr.unauth_delete}
+    ${'jp'}  | ${jp.unauth_delete}
+    ${'np'}  | ${np.unauth_delete}
+    ${'pt'}  | ${pt.unauth_delete}
     ${'tr'}  | ${tr.unauth_delete}
   `(
     'returns error body with $message for unauthorized request when language is set as $language',
@@ -54,6 +71,7 @@ describe('Delete User', () => {
       expect(response.body.message).toBe(message);
     },
   );
+
   //Return correct response with correct credentials different user
   it('returns forbidden when delete request sent with correct credentials, but for different user', async () => {
     await addUser();
@@ -62,16 +80,10 @@ describe('Delete User', () => {
     const response = await deleteUser(toDelete.id, { token: token });
     expect(response.status).toBe(403);
   });
+
   //Return correct response with incorrect token
   it('returns 403 if token is invalid', async () => {
     const response = await deleteUser(5, { token: '456' });
     expect(response.status).toBe(403);
   });
-  //Return correct response with incorrect password
-  //   it('returns 200 ok when delete request sent from authorized user', async () => {
-  //     const savedUser = await addUser();
-  //     const token = await auth({ auth: { email: 'user1@mail.com', password: 'P4ssword' } });
-  //     const response = await deleteUser(savedUser.id, { token: token });
-  //     expect(response.status).toBe(200);
-  //   });
 });

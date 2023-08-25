@@ -3,11 +3,15 @@ const request = require('supertest');
 const sequelize = require('../src/config/database');
 const bcrypt = require('bcrypt');
 const User = require('../src/user/model/User');
+const fs = require('fs');
+const path = require('path');
 
 //Initialize the database
 const syncSequel = () => {
   beforeAll(async () => {
-    await sequelize.sync();
+    if (process.env.NODE_ENV === 'test') {
+      await sequelize.sync();
+    }
   });
 };
 
@@ -18,12 +22,16 @@ const clearBefore = () => {
   });
 };
 
+const filePath = path.join('.', '__test__', 'assets', 'hi-yall.png');
+const in64 = fs.readFileSync(filePath, { encoding: 'base64' });
+
 //Test user object
 const activeUser = {
   username: 'user1',
   email: 'user1@mail.com',
   password: 'P4ssword',
   inactive: false,
+  image: in64,
 };
 
 //get route for users
@@ -53,6 +61,12 @@ const addUser = async (user = { ...activeUser }) => {
   return await User.create(user);
 };
 
+//Read file path for images as base64
+const base64File = (file = 'hi-yall.png') => {
+  const filePath = path.join('.', '__test__', 'assets', file);
+  return fs.readFileSync(filePath, { encoding: 'base64' });
+};
+
 module.exports = {
   syncSequel,
   clearBefore,
@@ -61,4 +75,6 @@ module.exports = {
   getUser,
   incrementUser,
   addUser,
+  in64,
+  base64File,
 };

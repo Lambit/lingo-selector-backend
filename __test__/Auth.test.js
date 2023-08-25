@@ -3,6 +3,14 @@ const request = require('supertest');
 const Token = require('../src/auth/model/Token');
 const { syncSequel, clearBefore, activeUser, addUser } = require('./constants');
 const en = require('../locals/en/translation.json');
+const cn = require('../locals/cn/translation.json');
+const de = require('../locals/de/translation.json');
+const es = require('../locals/es/translation.json');
+const fr = require('../locals/fr/translation.json');
+const gr = require('../locals/gr/translation.json');
+const jp = require('../locals/jp/translation.json');
+const np = require('../locals/np/translation.json');
+const pt = require('../locals/pt/translation.json');
 const tr = require('../locals/tr/translation.json');
 
 syncSequel();
@@ -38,12 +46,12 @@ describe('Authentication', () => {
   });
 
   //Return correct credentials when logged in
-  it('returns only user id, username, and token when login success', async () => {
+  it('returns only user id, username, token, and image and token when login success', async () => {
     const user = await addUser();
     const response = await postAuth({ email: 'user1@mail.com', password: 'P4ssword' });
     expect(response.body.id).toBe(user.id);
     expect(response.body.username).toBe(user.username);
-    expect(Object.keys(response.body)).toEqual(['id', 'username', 'token']);
+    expect(Object.keys(response.body)).toEqual(['id', 'username', 'token', 'image']);
   });
 
   //Return fail status code
@@ -68,6 +76,14 @@ describe('Authentication', () => {
   it.each`
     language | message
     ${'en'}  | ${en.auth_failure}
+    ${'cn'}  | ${cn.auth_failure}
+    ${'de'}  | ${de.auth_failure}
+    ${'es'}  | ${es.auth_failure}
+    ${'fr'}  | ${fr.auth_failure}
+    ${'gr'}  | ${gr.auth_failure}
+    ${'jp'}  | ${jp.auth_failure}
+    ${'np'}  | ${np.auth_failure}
+    ${'pt'}  | ${pt.auth_failure}
     ${'tr'}  | ${tr.auth_failure}
   `('returns $message when authentication fails and language is set as $language', async ({ language, message }) => {
     const response = await postAuth({ email: 'user1@mail.com', password: 'P4ssword' }, { language });

@@ -6,6 +6,7 @@ const { check, validationResult } = require('express-validator');
 const ValidationErrorException = require('../../error/ValidationErrorException');
 const ForbiddenException = require('../../error/ForbiddenException');
 const pagination = require('../../middleware/pagination');
+const FileService = require('../services/FileService');
 
 /*
     UserRouter hold the user routes for our API post request that uses the save function
@@ -96,15 +97,45 @@ router.get('/api/users/:id', async (req, res, next) => {
   }
 });
 
-//Put route ----- Update user - if id doesnt match return error response other wise valid
-router.put('/api/users/:id', async (req, res, next) => {
-  const authenticatedUser = req.authenticatedUser;
-  if (!authenticatedUser || authenticatedUser.id !== req.params.id) {
-    return next(new ForbiddenException('unauth_update'));
-  }
-  const user = await UserService.updateUser(req.params.id, req.body);
-  return res.send(user);
-});
+//Put route ----- Update user - if id doesnt match return error response other wise valid, if updated validation check as well
+router.put(
+  '/api/users/:id',
+  //username check, conditions and message
+  check('username')
+    .notEmpty()
+    .withMessage('username_null')
+    .bail()
+    .isLength({ min: 4, max: 32 })
+    .withMessage('username_size'),
+  check('image').custom(async (imageAsBase64String) => {
+    if (!imageAsBase64String) {
+      return true;
+    }
+    const buffer = Buffer.from(imageAsBase64String, 'base64');
+    if (!FileService.isLessThan2MB(buffer)) {
+      throw new Error('profile_image_size');
+    }
+
+    const supportedType = await FileService.isSupportedFileType(buffer);
+    if (!supportedType) {
+      throw new Error('unsupported_image_file');
+    }
+
+    return true;
+  }),
+  async (req, res, next) => {
+    const authenticatedUser = req.authenticatedUser;
+    if (!authenticatedUser || authenticatedUser.id !== req.params.id) {
+      return next(new ForbiddenException('unauth_update'));
+    }
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return next(new ValidationErrorException(errors.array()));
+    }
+    const user = await UserService.updateUser(req.params.id, req.body);
+    return res.send(user);
+  },
+);
 
 //Delete route ----- Delete user
 router.delete('/api/users/:id', async (req, res, next) => {
@@ -129,5 +160,35 @@ router.post('/api/user/password', check('email').isEmail().withMessage('email_in
     next(err);
   }
 });
+
+const passwordResetTokenValidator = async (req, res, next) => {
+  const user = await UserService.findByPasswordResetToken(req.body.passwordResetToken);
+  if (!user) {
+    return next(new ForbiddenException('password_reset_fail'));
+  }
+  next();
+};
+
+router.put(
+  '/api/user/password',
+  passwordResetTokenValidator,
+  check('password')
+    .notEmpty()
+    .withMessage('password_null')
+    .bail()
+    .isLength({ min: 6 })
+    .withMessage('password_size')
+    .bail()
+    .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).*$/)
+    .withMessage('password_pattern'),
+  async (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return next(new ValidationErrorException(errors.array()));
+    }
+    await UserService.updatePassword(req.body);
+    res.send();
+  },
+);
 
 module.exports = router;

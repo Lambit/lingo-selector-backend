@@ -49,6 +49,7 @@ const deleteToken = async (token) => {
   await Token.destroy({ where: { token: token } });
 };
 
+//deletes all tokens related to the user, identified by their id
 const deleteMultipleTokens = async (userId) => {
   await Token.destroy({ where: { userId: userId } });
 };

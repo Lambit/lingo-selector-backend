@@ -1,6 +1,14 @@
 const User = require('../src/user/model/User');
 const { syncSequel, clearBefore, activeUser, getUsers, incrementUser, getUser } = require('./constants');
 const en = require('../locals/en/translation.json');
+const cn = require('../locals/cn/translation.json');
+const de = require('../locals/de/translation.json');
+const es = require('../locals/es/translation.json');
+const fr = require('../locals/fr/translation.json');
+const gr = require('../locals/gr/translation.json');
+const jp = require('../locals/jp/translation.json');
+const np = require('../locals/np/translation.json');
+const pt = require('../locals/pt/translation.json');
 const tr = require('../locals/tr/translation.json');
 
 syncSequel();
@@ -36,11 +44,11 @@ describe('Listing Users', () => {
   });
 
   //Return selected user data
-  it('returns only id, username, and email in content array for each user', async () => {
+  it('returns only id, username, email, and image in content array for each user', async () => {
     await incrementUser(11);
     const response = await getUsers();
     const user = response.body.content[0];
-    expect(Object.keys(user)).toEqual(['id', 'username', 'email']);
+    expect(Object.keys(user)).toEqual(['id', 'username', 'email', 'image']);
   });
 
   //Return total page amount
@@ -73,6 +81,14 @@ describe('Get User', () => {
   it.each`
     language | message
     ${'tr'}  | ${tr.user_not_found}
+    ${'cn'}  | ${cn.user_not_found}
+    ${'de'}  | ${de.user_not_found}
+    ${'es'}  | ${es.user_not_found}
+    ${'fr'}  | ${fr.user_not_found}
+    ${'gr'}  | ${gr.user_not_found}
+    ${'jp'}  | ${jp.user_not_found}
+    ${'np'}  | ${np.user_not_found}
+    ${'pt'}  | ${pt.user_not_found}
     ${'en'}  | ${en.user_not_found}
   `('returns $message for unknown user when language is set to $language', async ({ language, message }) => {
     const response = await getUser().set('Accept-Language', language);
@@ -97,9 +113,9 @@ describe('Get User', () => {
   });
 
   //Return response body
-  it('returns id, username and email in response body when an active user exist', async () => {
+  it('returns id, username, email, and image in response body when an active user exist', async () => {
     const user = await User.create({ ...activeUser });
     const response = await getUser(user.id);
-    expect(Object.keys(response.body)).toEqual(['id', 'username', 'email']);
+    expect(Object.keys(response.body)).toEqual(['id', 'username', 'email', 'image']);
   });
 });
