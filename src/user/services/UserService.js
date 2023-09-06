@@ -89,10 +89,10 @@ const updateUser = async (id, updateBody) => {
     },
   });
   user.username = updateBody.username;
-  if (user.image) {
-    await FileService.deleteProfileImage(user.image);
-  }
-  user.image = await FileService.saveProfileImage(updateBody.image);
+  // if (user.image) {
+  //   await FileService.deleteProfileImage(user.image);
+  // }
+  // user.image = await FileService.saveProfileImage(updateBody.image);
   await user.save();
   return {
     id: id,

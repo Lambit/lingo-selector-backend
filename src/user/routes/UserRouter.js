@@ -100,7 +100,6 @@ router.get('/api/users/:id', async (req, res, next) => {
 //Put route ----- Update user - if id doesnt match return error response other wise valid, if updated validation check as well
 router.put(
   '/api/users/:id',
-  //username check, conditions and message
   check('username')
     .notEmpty()
     .withMessage('username_null')
@@ -125,7 +124,8 @@ router.put(
   }),
   async (req, res, next) => {
     const authenticatedUser = req.authenticatedUser;
-    if (!authenticatedUser || authenticatedUser.id !== req.params.id) {
+    // eslint-disable-next-line eqeqeq
+    if (!authenticatedUser || authenticatedUser.id != req.params.id) {
       return next(new ForbiddenException('unauth_update'));
     }
     const errors = validationResult(req);
@@ -140,7 +140,8 @@ router.put(
 //Delete route ----- Delete user
 router.delete('/api/users/:id', async (req, res, next) => {
   const authenticatedUser = req.authenticatedUser;
-  if (!authenticatedUser || authenticatedUser.id !== req.params.id) {
+  // eslint-disable-next-line eqeqeq
+  if (!authenticatedUser || authenticatedUser.id != req.params.id) {
     return next(new ForbiddenException('unauth_delete'));
   }
   await UserService.deleteUser(req.params.id);

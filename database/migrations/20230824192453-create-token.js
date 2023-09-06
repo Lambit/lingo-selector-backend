@@ -16,7 +16,7 @@ module.exports = {
       lastUsedAt: {
         type: Sequelize.DATE,
       },
-      user_id: {
+      userId: {
         type: Sequelize.INTEGER,
         references: {
           model: 'users',
