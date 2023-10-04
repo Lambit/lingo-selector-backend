@@ -36,7 +36,7 @@ The application is deployed on Heroku for easy access.
 This application uses Jest, Supertest, and smtp-server for testing. 
 
 ## Deployment
-This application is deployed on Heroku for public access. You can access it at https://[your-app-name.herokuapp.com](https://peaceful-inlet-22477-28dd94940b26.herokuapp.com/).
+This application is deployed on Heroku for public access. You can access it at [Lingo Selector](https://peaceful-inlet-22477-28dd94940b26.herokuapp.com/).
 
 ## Contributing
 1. If you would like to contribute to the development of this application, please follow these guidelines:
