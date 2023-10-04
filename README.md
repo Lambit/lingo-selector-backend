@@ -1,10 +1,10 @@
 # lingo-selector-backend
 
 ## Table of Contents
-Description
-Usage
-Testing
-Contributing
+* Description
+* Usage
+* Testing
+* Contributing
 
 
 ## Description
